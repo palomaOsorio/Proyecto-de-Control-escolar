@@ -20,7 +20,7 @@ typedef struct {
     char profesor[50] ;
     int clave ;
     int total_inscritos ;
-    Alumno *alumnos[15];
+    Alumno alumnos[15];
 } Curso ;
 
 void guardar_archivo(Alumno* alumnos, int total_alumnos, char * nombre_archivo);
@@ -35,16 +35,16 @@ float leer_flotante();
 Curso crear_curso();
 void agregar_curso(Curso **cursos, int *total_cursos);
 Alumno crear_alumno();
-void agregar_estudiante(Alumno **alumnos,int *total_alumnos);
+void agregar_estudiante(Alumno **alumnos, int *total_alumnos);
 
 int buscar_alumno_matricula(Alumno*, int, char* );
 int buscar_curso(Curso *cursos, int total_cursos, int clave);
 void mostrar_curso(Curso c);
 void lista_cursos(Curso *cursos, int total_cursos);
 void lista_alumnos_curso(Curso c);
-float promedio_curso(Curso c);
+float promedio_curso(Curso c, Alumno *alumnos,int total_alumnos);
 int contar_aprobados(Curso c);
-void inscribir_alumno(Curso *curso, Alumno *alumno);
+void inscribir_alumno(Curso *curso, Alumno alumno);
 int curso_mas_aprobados(Curso *cursos, int total_cursos);
 void boleta_alumno(Alumno *a);
 void lista_todos_alumnos(Alumno* alumnos, int total_alumnos);

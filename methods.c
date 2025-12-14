@@ -9,46 +9,46 @@
 #include "methods.h"
 
 Curso * cargar_archivo_cursos(int * indice, int * tam, char * nombre_archivo)
-{ FILE * archivo = fopen(nombre_archivo, "rb");
+{
+    FILE * archivo = fopen(nombre_archivo, "rb");
     if(archivo == NULL){
-        printf("Error al abrir el archivo de los cursos.\n");
+        printf("Error al abrir el archivo\n");
         return NULL;
     }
+
     int cantidad = 0;
     fread(&cantidad, sizeof(int), 1, archivo);
     *tam = cantidad + cantidad / 2;
     Curso * nuevo_arreglo = (Curso*) malloc((*tam) * sizeof(Curso));
+
     if(nuevo_arreglo == NULL){
-        printf("Error al asignar memoria en los cursos.\n");
+        printf("Error al asignar memoria \n");
         fclose(archivo);
         return NULL;
     }
-    fread(nuevo_arreglo, sizeof(Curso), cantidad, archivo);
 
+    fread(nuevo_arreglo, sizeof(Curso), cantidad, archivo);
     *indice = cantidad;
     fclose(archivo);
-    printf("Se cargaron los datos correctamente de lso cursos.\n");
-
+    printf("Se cargaron los datos correctamente\n");
     return nuevo_arreglo;
+
 }
 
-void guardar_archivo_cursos(Curso* cursos, int total_cursos, char * nombre_archivo)
+void guardar_archivo_cursos(Curso* curso, int total_cursos, char * nombre_archivo)
 {
     FILE * archivo = fopen(nombre_archivo, "wb");
     if(archivo == NULL){
-        printf("Error al abrir el archivo cursos.\n");
+        printf("Error al abrir el archivo\n");
         return;
     }
-    fwrite(cursos, sizeof(Curso), total_cursos, archivo);
-
-//    fwrite(&total_cursos, sizeof(int), 1, archivo);
+    fwrite(&total_cursos, sizeof(int), 1, archivo);
     if(total_cursos > 0){
-        fwrite(cursos, sizeof(Curso), total_cursos, archivo);
+        fwrite(curso, sizeof(Curso), total_cursos, archivo);
     }
     fclose(archivo);
-    printf("Se guardaron correctamente los datos de los cursos.\n");
+    printf("Se guardaron correctamente los datos\n");
 }
-
 
 Alumno * cargar_archivo(int * indice, int * tam, char * nombre_archivo)
 { FILE * archivo = fopen(nombre_archivo, "rb");
@@ -155,8 +155,10 @@ float leer_flotante()
     c.clave = leer_entero("Clave del curso:");
     c.total_inscritos = 0;
 
-    return c;
+
+     return c;
 }
+
 
 void agregar_curso(Curso **cursos, int *total_cursos){
      *cursos = (Curso *) realloc( *cursos, sizeof(Curso) * (*total_cursos +1));
@@ -194,7 +196,7 @@ void agregar_estudiante(Alumno **alumnos, int *total_alumnos)
     }
     (*alumnos)[*total_alumnos]= crear_alumno();
     (*total_alumnos)++;
-    printf("Alumno agregado correctamente\n");
+    printf("Alumno agregado correctamente");
 }
 
 int buscar_alumno_matricula(Alumno *alumnos, int total_alumnos, char *matricula)
@@ -208,6 +210,7 @@ int buscar_alumno_matricula(Alumno *alumnos, int total_alumnos, char *matricula)
     }
     return -1;
 }
+
 int buscar_curso(Curso *cursos, int total_cursos, int clave)
 {
     for (int i=0;i< total_cursos; i++)
@@ -227,6 +230,7 @@ void mostrar_curso(Curso c)
     printf("Profesor: %s\n", c.profesor);
     printf("Inscritos: %d\n", c.total_inscritos);
 }
+
 void lista_cursos(Curso *cursos, int total_cursos)
 {
     for (int i=0; i < total_cursos; i++)
@@ -235,21 +239,31 @@ void lista_cursos(Curso *cursos, int total_cursos)
         printf("----------------\n");
     }
 }
+
 void lista_alumnos_curso(Curso c)
 {
     for (int i=0; i < c.total_inscritos; i++)
     printf("%d.Nombre: %s %s %s\n Matricula:%s\n"
-        ,i+1, c.alumnos[i]->nombre,c.alumnos[i]->apellido_p, c.alumnos[i]->apellido_m,
-        c.alumnos[i]->matricula);
+        ,i+1,  c.alumnos[i].nombre, c.alumnos[i].apellido_p, c.alumnos[i].apellido_m,
+        c.alumnos[i].matricula);
 }
-float promedio_curso(Curso c){
+
+float promedio_curso(Curso c, Alumno *alumno, int total_alumnos){
 
     float suma = 0;
 
+
     for (int i=0; i < c.total_inscritos; i++)
     {
-        suma += c.alumnos[i]->calificacion;
+        for(int j=0; j<total_alumnos;j++){
+
+            if(strcmp(c.alumnos[i].matricula, alumno[j].matricula) == 0){
+                suma += alumno[j].calificacion;
+            }
+        }
+
     }
+
     if (c.total_inscritos == 0)
         return 0;
 
@@ -260,14 +274,15 @@ int contar_aprobados(Curso c)
 {   int aprobados = 0;
     for (int i=0; i < c.total_inscritos; i++)
     {
-        if (c.alumnos[i]->calificacion >= 7)
+        if (c.alumnos[i].calificacion >= 7)
         {
             aprobados++;
         }
     }
     return aprobados;
 }
-void inscribir_alumno(Curso *curso, Alumno *alumno)
+
+void inscribir_alumno(Curso *curso, Alumno alumno)
 {
     if (curso->total_inscritos >= 15)
     {
@@ -276,6 +291,14 @@ void inscribir_alumno(Curso *curso, Alumno *alumno)
     curso->alumnos[curso->total_inscritos]= alumno;
     curso->total_inscritos++;
 }
+
+void boleta_estudiante(Alumno a)
+{
+    printf("Nombre:%s %s %s\n", a.nombre,a.apellido_p,a.apellido_m);
+    printf("Matricula: %s\n",a.matricula);
+    printf("Calificacion: %f\n",a.calificacion);
+}
+
 int curso_mas_aprobados(Curso* cursos,int total_cursos)
 {
     int max =-1, pos = -1;
@@ -283,7 +306,7 @@ int curso_mas_aprobados(Curso* cursos,int total_cursos)
     {
         int aprobados =0;
         for (int j=0; j < cursos[i].total_inscritos; j++)
-            if (cursos[i].alumnos[j]->calificacion >= CALIF_MIN)
+            if (cursos[i].alumnos[j].calificacion >= CALIF_MIN)
             {
                 aprobados++;
             }
@@ -304,8 +327,7 @@ void boleta_alumno(Alumno *a)
     printf("Calificacion: %f\n",a->calificacion);
 
     printf("¿Desea cambiar calificación S/N: \n?" );
-    scanf("%c",&respuesta);
-    getchar();
+    scanf("%c", &respuesta);
 
     if (respuesta == 'S')
     {
